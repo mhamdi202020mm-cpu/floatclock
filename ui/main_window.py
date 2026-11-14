@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from PySide6.QtCore import QTimer, Qt, Signal
-from PySide6.QtGui import QAction, QColor, QGuiApplication
+from PySide6.QtGui import QAction, QColor, QGuiApplication, QKeySequence, QShortcut
 from PySide6.QtWidgets import (QApplication, QFrame, QGraphicsDropShadowEffect, QHBoxLayout, QLabel,
                                QMenu, QSizeGrip, QStackedWidget, QSystemTrayIcon, QTabWidget,
                                QToolButton, QVBoxLayout, QWidget)
@@ -18,6 +18,7 @@ MARGIN = 12  # transparent margin around the card (room for the shadow)
 COMPACT_SIZE = (190 + 2 * MARGIN, 66 + 2 * MARGIN)
 EXPANDED_MIN = (320, 360)
 QWIDGETSIZE_MAX = 16777215
+MIN_OPACITY = 0.6  # lower values break text contrast
 
 
 class MainWindow(QWidget):
@@ -40,6 +41,9 @@ class MainWindow(QWidget):
 
         self._build_ui()
         self._build_tray()
+        self._shortcut = QShortcut(QKeySequence("Ctrl+Shift+C"), self)
+        self._shortcut.setContext(Qt.ShortcutContext.ApplicationShortcut)
+        self._shortcut.activated.connect(lambda: self.set_compact(not self._compact))
 
         # hotkey
         self.hotkey = HotkeyManager(self)
@@ -70,7 +74,7 @@ class MainWindow(QWidget):
         self._flash_timer = QTimer(self)
         self._flash_timer.timeout.connect(self._flash_step)
 
-        self.setWindowOpacity(settings.get("opacity"))
+        self.setWindowOpacity(max(MIN_OPACITY, settings.get("opacity")))
         self._apply_mode(initial=True)
         self._place_initially()
         self._tick()
@@ -84,7 +88,7 @@ class MainWindow(QWidget):
         shadow = QGraphicsDropShadowEffect(self.card)
         shadow.setBlurRadius(32)
         shadow.setOffset(0, 6)
-        shadow.setColor(QColor(0, 0, 0, 170))
+        shadow.setColor(QColor(0, 0, 0, 90))
         self.card.setGraphicsEffect(shadow)
         outer.addWidget(self.card)
 
@@ -107,11 +111,12 @@ class MainWindow(QWidget):
         header.addWidget(title)
         header.addStretch(1)
         for text, tip, fn in (("⚙", "Settings", self.open_settings),
-                              ("▭", "Compact mode", lambda: self.set_compact(True)),
+                              ("▭", "Compact mode (Ctrl+Shift+C)", lambda: self.set_compact(True)),
                               ("✕", "Hide to tray", self.hide)):
             b = QToolButton()
             b.setText(text)
             b.setToolTip(tip)
+            b.setAccessibleName(tip.split(" (")[0])
             b.clicked.connect(fn)
             header.addWidget(b)
         pl.addLayout(header)
@@ -120,6 +125,7 @@ class MainWindow(QWidget):
         self.timer_widget = TimerWidget()
         self.alarms_widget = AlarmsWidget(self.alarm_manager, self.settings)
         self.tabs = QTabWidget()
+        self.tabs.setAccessibleName("FloatClock sections")
         self.tabs.addTab(self.clock_full, "Clock")
         self.tabs.addTab(self.timer_widget, "Timer")
         self.tabs.addTab(self.alarms_widget, "Alarms")
@@ -170,7 +176,12 @@ class MainWindow(QWidget):
         if self._compact:
             self.stack.setCurrentIndex(0)
             self.setMinimumSize(0, 0)
-            self.setFixedSize(*COMPACT_SIZE)
+            self.setMaximumSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX)
+            # grow with the system font size instead of clipping (stack hint covers both pages, so
+            # measure the compact page alone)
+            hint = self.clock_compact.sizeHint()
+            self.setFixedSize(max(COMPACT_SIZE[0], hint.width() + 20 + 2 * MARGIN),
+                              max(COMPACT_SIZE[1], hint.height() + 12 + 2 * MARGIN))
         else:
             self.stack.setCurrentIndex(1)
             self.setMinimumSize(*EXPANDED_MIN)
@@ -297,7 +308,7 @@ class MainWindow(QWidget):
 
     def _on_setting(self, key):
         if key == "opacity":
-            self.setWindowOpacity(self.settings.get("opacity"))
+            self.setWindowOpacity(max(MIN_OPACITY, self.settings.get("opacity")))
         elif key in ("use_24h", "show_seconds", "show_date"):
             self._refresh_clocks(datetime.now())
         elif key in ("hotkey", "hotkey_enabled"):

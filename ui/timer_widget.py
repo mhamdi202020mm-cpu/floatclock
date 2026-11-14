@@ -35,6 +35,8 @@ class TimerWidget(QWidget):
         self.progress = QProgressBar()
         self.progress.setRange(0, 1000)
         self.progress.setTextVisible(False)
+        self.progress.setAccessibleName("Timer progress")
+        self.display.setAccessibleName("Time remaining")
 
         self.min_spin = QSpinBox()
         self.min_spin.setRange(0, 999)

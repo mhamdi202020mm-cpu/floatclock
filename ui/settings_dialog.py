@@ -18,8 +18,9 @@ class SettingsDialog(QDialog):
         self.sound = sound
 
         self.opacity = QSlider(Qt.Orientation.Horizontal)
-        self.opacity.setRange(30, 100)
-        self.opacity.setValue(int(settings.get("opacity") * 100))
+        self.opacity.setRange(60, 100)
+        self.opacity.setValue(max(60, int(settings.get("opacity") * 100)))
+        self.opacity.setAccessibleName("Opacity")
         self.opacity.valueChanged.connect(lambda v: settings.set("opacity", v / 100))
 
         self.fmt = QComboBox()
