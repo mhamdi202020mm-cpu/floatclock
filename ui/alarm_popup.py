@@ -48,13 +48,6 @@ class AlarmPopup(QDialog):
         inner = QVBoxLayout(card)
         inner.setContentsMargins(28, 30, 28, 24)
         inner.setSpacing(0)
-        if icon_text:
-            icon = QLabel(icon_text)
-            icon.setObjectName("popupIcon")
-            icon.setAlignment(Qt.AlignmentFlag.AlignCenter)
-            icon.setAccessibleName("Notification")
-            inner.addWidget(icon)
-            inner.addSpacing(10)
         inner.addWidget(t)
         inner.addSpacing(6)
         inner.addWidget(m)

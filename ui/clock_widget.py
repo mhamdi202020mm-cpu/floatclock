@@ -61,7 +61,7 @@ class ClockWidget(QWidget):
         self.timer_label.setVisible(active)
         self.timer_progress.setVisible(active)
         if active:
-            self.timer_label.setText(("⏸ " if paused else "⏱ ") + text)
+            self.timer_label.setText(("⏸ " if paused else "") + text)
             self.timer_label.setAccessibleName(("Timer paused: " if paused else "Timer: ") + text)
             self.timer_label.setProperty("paused", paused)
             self.timer_label.style().unpolish(self.timer_label)
