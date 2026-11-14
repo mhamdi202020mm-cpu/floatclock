@@ -341,11 +341,11 @@ class MainWindow(QWidget):
     # ----------------------------------------------------- alarms / timer
     def _on_alarm(self, alarm):
         mins = self.settings.get("snooze_minutes")
-        self._ring(f"⏰ {alarm.time}", alarm.label or "Alarm", True, mins,
+        self._ring(f" {alarm.time}", alarm.label or "Alarm", True, mins,
                    on_snooze=lambda: self.alarm_manager.snooze(alarm, mins))
 
     def _on_timer_finished(self):
-        self._ring("⏱ Timer finished", "Time's up!", False)
+        self._ring(" Timer finished", "Time's up!", False)
 
     def _ring(self, title, message, allow_snooze, snooze_minutes=5, on_snooze=None):
         self.show_and_raise()

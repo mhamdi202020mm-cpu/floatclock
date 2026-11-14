@@ -33,8 +33,20 @@ QLabel#date { color: #5F5F5F; font-size: 10pt; letter-spacing: 2px; }
 QLabel#title { color: #5F5F5F; font-size: 8pt; font-weight: 700; letter-spacing: 4px; }
 QLabel#timerDisplay { font-size: 38pt; font-weight: 200; letter-spacing: 1px; }
 QLabel#hint { color: #5F5F5F; font-size: 9pt; }
-QLabel#popupTitle { font-size: 13pt; font-weight: 600; }
-QLabel#popupMsg { font-size: 11pt; color: #3d3d3d; }
+QFrame#popupCard { background: #F5F5F7; border: 1px solid rgba(0, 0, 0, 26); border-radius: 22px; }
+QLabel#popupIcon { font-size: 34pt; }
+QLabel#popupTitle { font-size: 21pt; font-weight: 600; color: #1D1D1F; letter-spacing: 0px; }
+QLabel#popupMsg { font-size: 12pt; color: #6E6E73; }
+QPushButton#popupPrimary { background: #0071E3; color: #FFFFFF; border: 2px solid transparent;
+    border-radius: 14px; padding: 12px 16px; font-size: 12pt; font-weight: 600; min-height: 22px; }
+QPushButton#popupPrimary:hover { background: #0077ED; }
+QPushButton#popupPrimary:pressed { background: #0062C4; }
+QPushButton#popupPrimary:focus { border: 2px solid #1D1D1F; }
+QPushButton#popupSecondary { background: #E8E8ED; color: #1D1D1F; border: 2px solid transparent;
+    border-radius: 14px; padding: 12px 16px; font-size: 12pt; font-weight: 500; min-height: 22px; }
+QPushButton#popupSecondary:hover { background: #DCDCE1; }
+QPushButton#popupSecondary:pressed { background: #D1D1D6; }
+QPushButton#popupSecondary:focus { border: 2px solid #1D1D1F; }
 QTabWidget::pane { border: 0; }
 QTabBar::tab { background: transparent; padding: 7px 16px; color: #5F5F5F; font-weight: 600;
                letter-spacing: 1px; border-bottom: 2px solid transparent; }
